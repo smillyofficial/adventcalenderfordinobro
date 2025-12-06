@@ -1,0 +1,268 @@
+:root {
+    --primary-color: #e74c3c; /* Red */
+    --secondary-color: #2ecc71; /* Green */
+    --gold-color: #FFD700;
+    --text-color: #34495e;
+    --card-bg: #f5f5f5;
+    --locked-bg: #c0392b;
+    --unlocked-bg: #f1c40f;
+}
+
+body {
+    font-family: 'Fredoka', sans-serif;
+    background: linear-gradient(to bottom, #74b9ff, #a29bfe); /* Light Blue/Purple Sky */
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 1000px;
+    width: 90%;
+    margin: 20px auto;
+    border: 8px solid var(--primary-color);
+}
+
+.title {
+    color: var(--primary-color);
+    font-size: 3em;
+    margin-bottom: 20px;
+    text-shadow: 3px 3px 0 var(--secondary-color);
+}
+
+.countdown-timer {
+    font-size: 1.8em;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    padding: 10px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    border: 3px solid var(--secondary-color);
+    font-weight: bold;
+}
+
+/* --- Calendar Grid Styling --- */
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.door {
+    background: var(--locked-bg);
+    color: white;
+    padding: 20px;
+    border-radius: 15px;
+    cursor: not-allowed;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    font-size: 1.5em;
+    font-weight: bold;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 8px 0 var(--primary-color);
+    border: 3px solid white;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.door-day-number {
+    font-size: 1.5em;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.door.unlocked {
+    background: var(--unlocked-bg);
+    cursor: pointer;
+    box-shadow: 0 8px 0 #e67e22;
+}
+
+.door.unlocked:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 13px 0 #e67e22;
+}
+
+.door.claimed {
+    background: var(--secondary-color); /* Green after claiming */
+    box-shadow: 0 8px 0 #27ae60;
+    cursor: default;
+}
+
+/* Special Mystery Doors (23, 24, 25) */
+.door.mystery {
+    background: var(--gold-color);
+    box-shadow: 0 8px 0 #b8860b;
+    border: 5px solid white;
+    /* RGB Glowing Effect */
+    animation: rgb-glow 1.5s infinite alternate;
+}
+
+@keyframes rgb-glow {
+    0% { border-color: #ff0000; }
+    33% { border-color: #00ff00; }
+    66% { border-color: #0000ff; }
+    100% { border-color: #ff0000; }
+}
+
+/* --- Snowfall Effect --- */
+
+@keyframes snow {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.snowflakes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Generating Snowflakes (will be done in JS for dynamic effect) */
+/* The JS will dynamically insert snowflake emojis with the 'snow' animation */
+
+
+/* --- Modal Styling (For Mystery and Reward) --- */
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 5% auto; /* 15% from the top and centered */
+    padding: 30px;
+    border: 5px solid var(--primary-color);
+    width: 80%;
+    max-width: 400px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+    animation: bounce-in 0.5s ease-out;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.close-button {
+    color: var(--primary-color);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--secondary-color);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.mystery-text {
+    font-size: 2em;
+    color: var(--primary-color);
+    font-weight: bold;
+    margin: 0;
+}
+
+/* --- Admin Panel Styling --- */
+.admin-panel {
+    margin-top: 40px;
+    padding: 20px;
+    border: 3px dashed var(--primary-color);
+    border-radius: 15px;
+    background: #ffeaa7; /* Light Yellow */
+}
+
+.admin-panel h2 {
+    color: var(--text-color);
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+.admin-panel button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 0 #c0392b;
+    background: var(--primary-color);
+    color: white;
+}
+
+.admin-panel button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #c0392b;
+}
+
+.admin-panel button:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    box-shadow: 0 4px 0 #95a5a6;
+}
+
+#unlock-special-days {
+    background: var(--gold-color);
+    color: var(--text-color);
+    box-shadow: 0 4px 0 #b8860b;
+}
+
+#unlock-special-days:hover:not(:disabled) {
+    box-shadow: 0 6px 0 #b8860b;
+}
+
+.admin-note {
+    font-style: italic;
+    margin-top: 15px;
+    color: #e67e22;
+}
+
+/* Sparkle Effect for Mystery Doors (Emoji fade-in/out) */
+.sparkle {
+    position: absolute;
+    font-size: 2em;
+    pointer-events: none;
+    animation: sparkle-fade 1.5s ease-out forwards;
+}
+
+@keyframes sparkle-fade {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.5); }
+}
