@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Advent Calendar</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="snowflakes" aria-hidden="true"></div>
+
+    <div class="container">
+        <h1 class="title">🎅 Winter Community Countdown 🎁</h1>
+        <div id="countdown" class="countdown-timer"></div>
+        
+        <div id="calendar-grid" class="calendar-grid">
+            </div>
+        
+        <div class="admin-panel">
+            <h2>⚙️ Admin Control Panel ⚙️</h2>
+            <button id="toggle-live-mode">Toggle Live Mode: <span id="live-status">OFF</span></button>
+            <button id="unlock-special-days" disabled>Unlock Mystery Days (23, 24, 25)</button>
+            <p class="admin-note">**Note:** Live mode must be ON for the calendar to be active.</p>
+        </div>
+    </div>
+
+    <div id="mystery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p class="mystery-text">🚨 A Mystery Awaits! 🚨</p>
+            <p>Check back later for an epic surprise.</p>
+        </div>
+    </div>
+
+    <div id="reward-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <p id="modal-message"></p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
