@@ -10,13 +10,13 @@
 
 body {
     font-family: 'Fredoka', sans-serif;
-    /* New Dark Festive Background */
     background: linear-gradient(to bottom, #16a085, #1abc9c); 
     color: var(--text-color);
     margin: 0;
     padding: 0;
     display: flex;
-    justify-content: center;
+    /* Center the container horizontally and vertically */
+    justify-content: center; 
     align-items: center;
     min-height: 100vh;
     overflow-x: hidden;
@@ -30,7 +30,7 @@ body {
     text-align: center;
     max-width: 1000px;
     width: 90%;
-    margin: 20px auto;
+    margin: 20px auto; /* Keep auto margins for responsive centering */
     border: 10px solid var(--primary-color);
 }
 
@@ -38,7 +38,7 @@ body {
     color: var(--primary-color);
     font-size: 3em;
     margin-bottom: 20px;
-    text-shadow: 4px 4px 0 var(--secondary-color); /* Thicker outline */
+    text-shadow: 4px 4px 0 var(--secondary-color);
 }
 
 .countdown-timer {
@@ -52,7 +52,7 @@ body {
     font-weight: bold;
 }
 
-/* --- Calendar Grid Styling --- */
+/* --- Calendar Grid Styling (Remains same) --- */
 
 .calendar-grid {
     display: grid;
@@ -66,7 +66,7 @@ body {
     color: white;
     padding: 20px;
     border-radius: 15px;
-    cursor: default; /* Default is now default */
+    cursor: default; 
     transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
     font-size: 1.5em;
     font-weight: bold;
@@ -75,20 +75,13 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 8px 0 #5f3316; /* Darker shadow for wood effect */
+    box-shadow: 0 8px 0 #5f3316; 
     border: 3px solid #fdfdfd;
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
     position: relative;
     overflow: hidden;
 }
 
-.door-day-number {
-    font-size: 1.5em;
-    line-height: 1;
-    margin-bottom: 5px;
-}
-
-/* Unlocked Doors */
 .door.unlocked {
     background: var(--unlocked-bg);
     cursor: pointer;
@@ -97,28 +90,20 @@ body {
     text-shadow: none;
 }
 
-.door.unlocked:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 13px 0 #e67e22;
-}
-
-/* Claimed Doors */
 .door.claimed {
-    background: var(--secondary-color); /* Green after claiming */
+    background: var(--secondary-color);
     box-shadow: 0 8px 0 #27ae60;
     cursor: default;
     color: white;
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* Special Mystery Doors (23, 24, 25) */
 .door.mystery {
     background: var(--gold-color);
     box-shadow: 0 8px 0 #b8860b;
     border: 5px solid white;
     color: var(--text-color);
     text-shadow: none;
-    /* RGB Glowing Effect */
     animation: rgb-glow 1.5s infinite alternate;
 }
 
@@ -129,39 +114,70 @@ body {
     100% { border-color: #ff0000; }
 }
 
-/* --- Snowfall Effect --- */
 
-@keyframes snow-fall {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(100vh) scale(0.5); opacity: 0; } /* Added scaling and opacity fade-out */
-}
+/* --- Modal Styling (For Mystery and Reward) --- */
 
-.snowflakes {
+.modal {
+    display: none; /* Hidden by default */
     position: fixed;
-    top: 0;
+    z-index: 1000;
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: -1;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6); /* Slightly darker overlay */
+    
+    /* New: Use Flexbox to center content vertically and horizontally */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.flake {
+.modal-content {
+    background-color: var(--card-bg);
+    /* Removed margin-top, centering is handled by flexbox */
+    padding: 30px;
+    border: 5px solid var(--primary-color);
+    width: 90%;
+    max-width: 450px; /* Slightly larger max-width for better appearance */
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    position: relative;
+    animation: bounce-in 0.5s ease-out;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.close-button {
+    color: var(--primary-color);
     position: absolute;
-    color: #ffffff; /* White snowflake */
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-    pointer-events: none;
-    animation: snow-fall linear infinite;
+    top: 10px;
+    right: 20px;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
-/* --- Admin Panel Styling --- */
+.mystery-text {
+    font-size: 2.2em;
+    color: var(--primary-color);
+    font-weight: bold;
+    margin: 0;
+}
+
+/* --- Admin Panel Styling (Remains same) --- */
+
 .admin-panel {
-    display: none; /* Hiding by default */
+    display: none; 
     margin-top: 40px;
     padding: 20px;
     border: 3px dashed var(--primary-color);
     border-radius: 15px;
     background: #ffeaa7; 
 }
-
-/* ... (Modal and button styles remain the same) ... */
+/* ... (Other styles remain the same) ... */
