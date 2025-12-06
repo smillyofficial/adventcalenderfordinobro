@@ -2,9 +2,10 @@
 
 // The official start date and end date for the event (Dec 11th to Dec 25th)
 const START_DATE = new Date('2025-12-11T00:00:00'); 
-const END_DATE = 25; // Last day of the calendar
+const END_DATE = 25; 
+const ADMIN_PASSWORD = 'nullandnoobius'; // Secret password
 
-// Rewards Map
+// Rewards Map (same as before)
 const REWARDS = {
     11: '400 XP',
     12: '800 XP',
@@ -14,7 +15,7 @@ const REWARDS = {
     16: '900 XP',
     17: '300 XP',
     18: 'Custom sticker request',
-    19: '1100 XP (A round amount)', // Decided a value for you
+    19: '1100 XP (A round amount)',
     20: 'WINTER GOLEM role',
     21: 'Dino Elf Role',
     22: '2000 XP',
@@ -23,28 +24,25 @@ const REWARDS = {
     25: 'LOCKED'
 };
 
-// Local storage keys
+// Local storage keys and initial state (same as before)
 const LS_PREFIX = 'advent_calendar_';
 const LS_CLAIMED_KEY = LS_PREFIX + 'claimed_dates';
 const LS_LAST_CLAIM_KEY = LS_PREFIX + 'last_claim_timestamp';
 const LS_LIVE_MODE_KEY = LS_PREFIX + 'live_mode';
 const LS_SPECIAL_UNLOCK_KEY = LS_PREFIX + 'special_unlocked';
 
-// State loaded from localStorage
 let claimedDates = JSON.parse(localStorage.getItem(LS_CLAIMED_KEY)) || [];
 let lastClaimTimestamp = parseInt(localStorage.getItem(LS_LAST_CLAIM_KEY) || '0');
 let isLiveModeOn = localStorage.getItem(LS_LIVE_MODE_KEY) === 'true';
 let areSpecialDaysUnlocked = localStorage.getItem(LS_SPECIAL_UNLOCK_KEY) === 'true';
 
-// Anti-bugging/cheating: Get the current date and time. 
-// In a real server environment, this would come from the server to prevent client-side manipulation.
-// Here we'll use the client date, but the 24h cooldown provides the main cheating prevention.
 const serverDate = new Date(); 
 let todayDay = serverDate.getDate(); 
 
 // --- DOM Elements ---
 const calendarGrid = document.getElementById('calendar-grid');
 const countdownElement = document.getElementById('countdown');
+const adminPanel = document.getElementById('admin-panel'); // Reference to the admin panel
 const liveStatusElement = document.getElementById('live-status');
 const toggleLiveButton = document.getElementById('toggle-live-mode');
 const unlockSpecialButton = document.getElementById('unlock-special-days');
@@ -52,11 +50,33 @@ const mysteryModal = document.getElementById('mystery-modal');
 const rewardModal = document.getElementById('reward-modal');
 const modalMessage = document.getElementById('modal-message');
 
-// --- Utility Functions ---
+// --- Admin Password Logic ---
+let passwordBuffer = ''; // Buffer to store typed keys
 
-/**
- * Persists the current state to Local Storage.
- */
+document.addEventListener('keydown', (e) => {
+    // Append the last typed key (lowercase) to the buffer
+    passwordBuffer += e.key.toLowerCase();
+    
+    // Check if the end of the buffer matches the password
+    if (passwordBuffer.endsWith(ADMIN_PASSWORD)) {
+        // Toggle visibility of the admin panel
+        if (adminPanel.style.display === 'block') {
+            adminPanel.style.display = 'none';
+        } else {
+            adminPanel.style.display = 'block';
+        }
+        
+        // Reset the buffer after success
+        passwordBuffer = '';
+    } else if (passwordBuffer.length > ADMIN_PASSWORD.length) {
+        // Keep the buffer length reasonable by truncating the start
+        passwordBuffer = passwordBuffer.substring(passwordBuffer.length - ADMIN_PASSWORD.length);
+    }
+});
+
+
+// --- Utility Functions (saveState, showModal, handleDoorClick - same logic as before) ---
+
 function saveState() {
     localStorage.setItem(LS_CLAIMED_KEY, JSON.stringify(claimedDates));
     localStorage.setItem(LS_LAST_CLAIM_KEY, lastClaimTimestamp);
@@ -65,10 +85,6 @@ function saveState() {
     updateAdminControls();
 }
 
-/**
- * Shows a modal with a message.
- * @param {string} message The message to display.
- */
 function showModal(message, isMystery = false) {
     if (isMystery) {
         mysteryModal.style.display = 'block';
@@ -78,13 +94,11 @@ function showModal(message, isMystery = false) {
     }
 }
 
-/**
- * Handles the click event on a calendar door.
- * @param {number} day The day number of the door.
- * @param {string} reward The reward associated with the day.
- */
 function handleDoorClick(day, reward) {
-    if (!isLiveModeOn) return; // Cannot click if live mode is off
+    if (!isLiveModeOn) {
+         showModal("🛑 **Event Inactive!** 🛑<br>The calendar is not yet live. Check back on Dec 11th.");
+         return;
+    }
 
     if (claimedDates.includes(day)) {
         showModal(`🎉 **Day ${day} Already Claimed!** 🎉<br>Reward: ${reward}`);
@@ -97,15 +111,14 @@ function handleDoorClick(day, reward) {
     }
 
     if (reward === 'LOCKED' && !areSpecialDaysUnlocked) {
-        // Special locked days
         triggerSparkles(document.querySelector(`.door[data-day="${day}"]`));
-        showModal('', true); // Show mystery modal
+        showModal('', true); 
         return;
     }
     
     // Check 24-hour cooldown
     const now = Date.now();
-    const cooldownDuration = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+    const cooldownDuration = 24 * 60 * 60 * 1000; 
     
     if (lastClaimTimestamp > 0 && (now - lastClaimTimestamp) < cooldownDuration) {
         const remainingTime = lastClaimTimestamp + cooldownDuration - now;
@@ -121,13 +134,13 @@ function handleDoorClick(day, reward) {
     lastClaimTimestamp = now;
     saveState();
     
-    // Update the door visual
     const doorElement = document.querySelector(`.door[data-day="${day}"]`);
     doorElement.classList.remove('unlocked');
     doorElement.classList.add('claimed');
 
     showModal(`🎁 **CONGRATULATIONS!** 🎁<br>You unlocked Day ${day}.<br>Your reward is: **${reward}**`);
 }
+
 
 // --- Snowfall and Sparkle Effects ---
 
@@ -136,7 +149,8 @@ function handleDoorClick(day, reward) {
  */
 function createSnowflakes() {
     const snowContainer = document.querySelector('.snowflakes');
-    const snowflakeEmoji = ['❄️', '🌨️', '🌟'];
+    // Using simple snowflake emoji
+    const snowflakeEmoji = ['❄️', '❅', '❆', '✨']; 
     const count = 50;
 
     for (let i = 0; i < count; i++) {
@@ -144,24 +158,17 @@ function createSnowflakes() {
         flake.innerHTML = snowflakeEmoji[Math.floor(Math.random() * snowflakeEmoji.length)];
         flake.classList.add('flake');
         
-        const size = Math.random() * 0.5 + 0.8;
+        const size = Math.random() * 0.8 + 0.6; // Slightly larger for cartoon effect
         flake.style.fontSize = `${size}em`;
         flake.style.left = `${Math.random() * 100}vw`;
-        flake.style.animationDuration = `${Math.random() * 10 + 10}s`; // 10-20s duration
+        flake.style.animationDuration = `${Math.random() * 8 + 12}s`; // 12-20s duration
         flake.style.animationDelay = `${Math.random() * 10}s`;
-        flake.style.opacity = Math.random() * 0.5 + 0.4;
+        flake.style.opacity = Math.random() * 0.4 + 0.5; // Fading
         
-        // Add the CSS animation property
-        flake.style.animationName = 'snow';
-
         snowContainer.appendChild(flake);
     }
 }
 
-/**
- * Creates the golden sparkling effect for the mystery doors.
- * @param {HTMLElement} targetElement The door element to sparkle around.
- */
 function triggerSparkles(targetElement) {
     const sparkleEmojis = ['✨', '🌟', '💫'];
     const count = 5;
@@ -171,18 +178,18 @@ function triggerSparkles(targetElement) {
         sparkle.innerHTML = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
         sparkle.classList.add('sparkle');
         
-        // Position the sparkle randomly around the element
-        const offsetX = (Math.random() - 0.5) * 100; // -50px to +50px
+        const offsetX = (Math.random() - 0.5) * 100; 
         const offsetY = (Math.random() - 0.5) * 100;
         
         const rect = targetElement.getBoundingClientRect();
         
+        // Use fixed positioning relative to viewport for the sparkles
+        sparkle.style.position = 'fixed';
         sparkle.style.top = `${rect.top + rect.height / 2 + offsetY}px`;
         sparkle.style.left = `${rect.left + rect.width / 2 + offsetX}px`;
         
         document.body.appendChild(sparkle);
 
-        // Remove the sparkle after its animation is finished
         setTimeout(() => {
             sparkle.remove();
         }, 1500);
@@ -196,11 +203,10 @@ function triggerSparkles(targetElement) {
  * Generates and updates the calendar doors.
  */
 function renderCalendar() {
-    calendarGrid.innerHTML = ''; // Clear existing doors
+    calendarGrid.innerHTML = ''; 
     
-    // Anti-bugging: Determine the current unlockable day
-    // The current day is capped by END_DATE (25) and must be after the START_DATE (11)
-    let maxUnlockDay = isLiveModeOn && serverDate >= START_DATE ? Math.min(todayDay, END_DATE) : 0;
+    // Determine the current unlockable day
+    let maxUnlockDay = serverDate >= START_DATE ? Math.min(todayDay, END_DATE) : 0;
     
     for (let day = 11; day <= END_DATE; day++) {
         const door = document.createElement('div');
@@ -211,6 +217,7 @@ function renderCalendar() {
         door.dataset.day = day;
         door.innerHTML = `<span class="door-day-number">${day}</span>`;
 
+        // Door status logic
         let isUnlockable = isLiveModeOn && day <= maxUnlockDay;
 
         if (isClaimed) {
@@ -221,7 +228,7 @@ function renderCalendar() {
             door.classList.add('mystery');
             door.innerHTML += '<span style="font-size:0.8em;">Mystery</span>';
             // Unlock if admin has opened them
-            if (areSpecialDaysUnlocked) {
+            if (areSpecialDaysUnlocked && isLiveModeOn) {
                 isUnlockable = true;
                 door.classList.remove('mystery');
                 door.classList.add('unlocked');
@@ -248,9 +255,15 @@ function updateCountdown() {
     const distance = START_DATE.getTime() - now;
 
     if (distance <= 0) {
-        countdownElement.textContent = "🎁 Opening Soon! Activate Live Mode! 🎁";
-        clearInterval(countdownInterval); // Stop the countdown
-        renderCalendar(); // Re-render to potentially unlock days based on date/live mode
+        // If the date is reached, check if live mode is ON
+        if (isLiveModeOn) {
+            countdownElement.textContent = "🎄 THE CALENDAR IS LIVE! 🎁";
+            countdownElement.style.backgroundColor = 'var(--secondary-color)';
+        } else {
+            countdownElement.textContent = "⌛ OPENING SOON: Activate Live Mode! 🚀";
+        }
+        clearInterval(countdownInterval); 
+        renderCalendar(); 
         return;
     }
 
@@ -266,27 +279,19 @@ function updateCountdown() {
 const countdownInterval = setInterval(updateCountdown, 1000);
 
 
-// --- Admin Panel Handlers ---
+// --- Admin Panel Handlers (same logic as before) ---
 
-/**
- * Toggles the global live mode status.
- */
 function toggleLiveMode() {
     isLiveModeOn = !isLiveModeOn;
     saveState();
-    renderCalendar(); // Re-render the calendar to reflect the new state
-    updateCountdown(); // Update the countdown message if it's past the start date
+    updateCountdown(); // Update countdown text immediately
+    renderCalendar(); 
 }
 
-/**
- * Updates the visual state of the admin panel buttons.
- */
 function updateAdminControls() {
-    // 1. Live Mode Status
     liveStatusElement.textContent = isLiveModeOn ? 'ON' : 'OFF';
     liveStatusElement.style.color = isLiveModeOn ? 'var(--secondary-color)' : 'var(--primary-color)';
 
-    // 2. Unlock Special Days Button
     unlockSpecialButton.disabled = !isLiveModeOn || areSpecialDaysUnlocked;
     if (areSpecialDaysUnlocked) {
         unlockSpecialButton.textContent = 'Mystery Days UNLOCKED 🔓';
@@ -297,16 +302,13 @@ function updateAdminControls() {
     }
 }
 
-/**
- * Globally unlocks days 23, 24, and 25.
- */
 function unlockSpecialDays() {
     if (!isLiveModeOn || areSpecialDaysUnlocked) return;
     
     areSpecialDaysUnlocked = true;
     saveState();
     renderCalendar();
-    alert("Days 23, 24, 25 have been globally unlocked!");
+    alert("Days 23, 24, 25 have been globally unlocked! Refresh the page to see the new status if needed.");
 }
 
 
@@ -341,11 +343,8 @@ function init() {
     createSnowflakes();
     updateCountdown();
     updateAdminControls();
-    // Only render the calendar if live mode is ON or it's past the start date 
-    // to correctly show the "opening soon" message via countdown.
-    if (isLiveModeOn || serverDate >= START_DATE) {
-        renderCalendar();
-    }
+    // Render the calendar to show all doors immediately
+    renderCalendar(); 
 }
 
 // Run the initialization
